@@ -5,12 +5,16 @@ class Address(models.Model):
     postal_code = models.CharField(max_length=12)
     city = models.CharField(max_length=50)
     street = models.CharField(max_length=100)
+    def __str__(self):
+        return f"{self.city}, {self.postal_code}, {self.street} "
 class Client(models.Model):
     name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=9)
     email = models.EmailField()
     address = models.OneToOneField(Address, on_delete=models.CASCADE , blank=True )
+    def __str__(self):
+        return f"{self.name} {self.surname}"
 class Order(models.Model):
     class OrderStatus(models.TextChoices):
         NEW = 'NE', 'Nowe'

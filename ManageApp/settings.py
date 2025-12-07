@@ -82,7 +82,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_URL = 'login'
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

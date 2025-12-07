@@ -25,9 +25,16 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Zlecenia</a>
         </li>
+          {% if user.is_authenticated %}
+              <li class="nav-item">
+          <a class="nav-link" href="#">Wyloguj się</a>
+          </li>
+              {% else %}
           <li class="nav-item">
-          <a class="nav-link" href="#">Zaloguj się</a>
-        </li>
+          <a class="nav-link" href="{% url 'login' %}">Zaloguj się</a>
+          </li>
+
+          {% endif %}
       </ul>
     </div>
   </div>
