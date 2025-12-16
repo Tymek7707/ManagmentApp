@@ -1,17 +1,45 @@
 {% extends 'base.html' %}
-{% block title %}Dashboard{% endblock %}
+
+
+{% block title %}Panel{% endblock %}
+
+{% block style_files %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboardstyles.css' %}">
+{% endblock %}
+
 {% block content %}
-	<div class="container text-center">
-  <div class="row">
-    <div class="col">
-        <p>Nowe zlecenia : {{ new }}</p>
+<div class="dashboard-wrapper">
+  <div class="dashboard-card">
+    <h1 class="dashboard-title">Panel główny</h1>
+    <p class="dashboard-subtitle">Podsumowanie Twoich zleceń</p>
+
+    <div class="container text-center">
+      <div class="row dashboard-row">
+        <div class="col-md-4 dashboard-col">
+          <div class="metric-card">
+            <div class="metric-label">Nowe zlecenia</div>
+            <div class="metric-value">{{ new }}</div>
+            <div class="metric-footer">Zlecenia oczekujące na realizację</div>
+          </div>
+        </div>
+        <div class="col-md-4 dashboard-col">
+          <div class="metric-card">
+            <div class="metric-label">W realizacji</div>
+            <div class="metric-value">0</div>
+            <div class="metric-footer">Możesz tu później dodać inne statystyki</div>
+          </div>
+        </div>
+        <div class="col-md-4 dashboard-col">
+          <div class="metric-card">
+            <div class="metric-label">Zakończone</div>
+            <div class="metric-value">0</div>
+            <div class="metric-footer">Podsumowanie zakończonych napraw</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col">
-      Column
-    </div>
-    <div class="col">
-      Column
-    </div>
+
   </div>
 </div>
 {% endblock %}

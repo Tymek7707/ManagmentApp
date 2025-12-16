@@ -6,7 +6,7 @@ from orders.models import Order
 @login_required
 def home_page(request):
     orders = Order.objects.all()
-    new_orders = orders.filter(status = 'NEW')
+    new_orders = orders.filter(status = Order.OrderStatus.NEW)
     return render(request ,'dashboard/dashboard_page.html', {
         'new' : len(new_orders)
     })

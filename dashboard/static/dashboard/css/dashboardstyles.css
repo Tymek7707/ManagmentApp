@@ -1,0 +1,84 @@
+body {
+  background: #f5f7fb;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-wrapper {
+  max-width: 1200px;
+  margin: 40px auto;
+}
+
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.dashboard-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.dashboard-subtitle {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+
+
+.metric-card {
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  border-radius: 16px;
+  color: #ffffff;
+  padding: 18px 20px;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+
+.metric-value {
+  font-size: 2.3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-top: 8px;
+}
+
+.metric-footer {
+  font-size: 0.85rem;
+  margin-top: 10px;
+  opacity: 0.9;
+}
+
+
+
+.metric-card::after {
+  content: "";
+  position: absolute;
+  right: -30px;
+  top: -30px;
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+
+
+
+.dashboard-row {
+  row-gap: 20px;
+}
+
+.dashboard-col {
+  padding: 8px;
+}

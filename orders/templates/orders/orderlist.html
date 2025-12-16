@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}
+	Lista zleceń
+{% endblock %}
+{% block style_files %}
+    {% load static %}
+	<link rel="stylesheet" href="{% static 'orders/css/orderlistview.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1>📋 Lista Zamówień</h1>
+        <a class="button-add-order" href="{% url 'dodaj_zamowienie' %}">
+              <span class="shadow"></span>
+              <span class="edge"></span>
+              <span class="front text">Dodaj nowe zamówienie</span>
+        </a>
+        {% if is_paginated %}
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">{{ paginator.count }}</div>
+                <div class="stat-label">Wszystkich zamówień</div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if order_list %}
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Klient</th>
+                    <th>Urządzenie</th>
+                    <th>Opis</th>
+                    <th>Status</th>
+                    <th>Data przyjęcia</th>
+                    <th>Data zakończenia</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in order_list %}
+                <tr>
+                    <td><strong>#{{ order.id }}</strong></td>
+                    <td>
+                        {% if order.client %}
+                            <span class="client-info">{{ order.client }}</span>
+                        {% else %}
+                            <span class="not-finished">Brak klienta</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ order.device }}</td>
+                    <td>
+                        <div class="description" title="{{ order.description }}">
+                            {{ order.description }}
+                        </div>
+                    </td>
+                    <td>
+                        {% if order.status == 'NE' %}
+                            <span class="status-badge status-new">{{ order.get_status_display }}</span>
+                        {% elif order.status == 'PE' %}
+                            <span class="status-badge status-pending">{{ order.get_status_display }}</span>
+                        {% elif order.status == 'SH' %}
+                            <span class="status-badge status-shipped">{{ order.get_status_display }}</span>
+                        {% elif order.status == 'TS' %}
+                            <span class="status-badge status-to-ship">{{ order.get_status_display }}</span>
+                        {% elif order.status == 'CA' %}
+                            <span class="status-badge status-cancelled">{{ order.get_status_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="date">{{ order.arrival_date|date:"d.m. Y H:i" }}</td>
+                    <td>
+                        {% if order.finish_date %}
+                            <span class="finished">{{ order.finish_date|date:"d.m. Y H:i" }}</span>
+                        {% else %}
+                            <span class="not-finished">W trakcie</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-orders">
+            <p>📭 Brak zamówień do wyświetlenia</p>
+        </div>
+        {% endif %}
+
+        {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">« Pierwsza</a>
+                <a href="?page={{ page_obj.previous_page_number }}">‹ Poprzednia</a>
+            {% endif %}
+
+            <span>Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Następna ›</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Ostatnia »</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
