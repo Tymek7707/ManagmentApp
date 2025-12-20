@@ -14,6 +14,7 @@
               <span class="edge"></span>
               <span class="front text">Dodaj nowe zamówienie</span>
         </a>
+        
         {% if is_paginated %}
         <div class="stats">
             <div class="stat-card">
@@ -24,60 +25,124 @@
         {% endif %}
 
         {% if order_list %}
-        <table class="orders-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Klient</th>
-                    <th>Urządzenie</th>
-                    <th>Opis</th>
-                    <th>Status</th>
-                    <th>Data przyjęcia</th>
-                    <th>Data zakończenia</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in order_list %}
-                <tr>
-                    <td><strong>#{{ order.id }}</strong></td>
-                    <td>
+        
+        <!-- TABELA - WIDOK DESKTOP -->
+        <div class="table-responsive-custom">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Klient</th>
+                        <th>Urządzenie</th>
+                        <th>Opis</th>
+                        <th>Status</th>
+                        <th>Data przyjęcia</th>
+                        <th>Data zakończenia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in order_list %}
+                    <tr>
+                        <td><strong>#{{ order.id }}</strong></td>
+                        <td>
+                            {% if order.client %}
+                                <span class="client-info">{{ order.client }}</span>
+                            {% else %}
+                                <span class="not-finished">Brak klienta</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ order.device }}</td>
+                        <td>
+                            <div class="description" title="{{ order.description }}">
+                                {{ order.description }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if order.status == 'NE' %}
+                                <span class="status-badge status-new">{{ order.get_status_display }}</span>
+                            {% elif order.status == 'PE' %}
+                                <span class="status-badge status-pending">{{ order.get_status_display }}</span>
+                            {% elif order.status == 'SH' %}
+                                <span class="status-badge status-shipped">{{ order.get_status_display }}</span>
+                            {% elif order.status == 'TS' %}
+                                <span class="status-badge status-to-ship">{{ order.get_status_display }}</span>
+                            {% elif order.status == 'CA' %}
+                                <span class="status-badge status-cancelled">{{ order.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="date">{{ order.arrival_date|date:"d.m. Y H:i" }}</td>
+                        <td>
+                            {% if order.finish_date %}
+                                <span class="finished">{{ order.finish_date|date:"d.m.Y H:i" }}</span>
+                            {% else %}
+                                <span class="not-finished">W trakcie</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- KARTY - WIDOK MOBILE -->
+        <div class="orders-cards">
+            {% for order in order_list %}
+            <div class="order-card">
+                <div class="order-card-header">
+                    <span class="order-card-id">#{{ order.id }}</span>
+                    {% if order.status == 'NE' %}
+                        <span class="status-badge status-new">{{ order.get_status_display }}</span>
+                    {% elif order.status == 'PE' %}
+                        <span class="status-badge status-pending">{{ order.get_status_display }}</span>
+                    {% elif order.status == 'SH' %}
+                        <span class="status-badge status-shipped">{{ order.get_status_display }}</span>
+                    {% elif order.status == 'TS' %}
+                        <span class="status-badge status-to-ship">{{ order.get_status_display }}</span>
+                    {% elif order.status == 'CA' %}
+                        <span class="status-badge status-cancelled">{{ order.get_status_display }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="order-card-row">
+                    <span class="order-card-label">👤 Klient:</span>
+                    <span class="order-card-value">
                         {% if order.client %}
-                            <span class="client-info">{{ order.client }}</span>
+                            {{ order.client }}
                         {% else %}
-                            <span class="not-finished">Brak klienta</span>
+                            <span class="not-finished">Brak</span>
                         {% endif %}
-                    </td>
-                    <td>{{ order.device }}</td>
-                    <td>
-                        <div class="description" title="{{ order.description }}">
-                            {{ order.description }}
-                        </div>
-                    </td>
-                    <td>
-                        {% if order.status == 'NE' %}
-                            <span class="status-badge status-new">{{ order.get_status_display }}</span>
-                        {% elif order.status == 'PE' %}
-                            <span class="status-badge status-pending">{{ order.get_status_display }}</span>
-                        {% elif order.status == 'SH' %}
-                            <span class="status-badge status-shipped">{{ order.get_status_display }}</span>
-                        {% elif order.status == 'TS' %}
-                            <span class="status-badge status-to-ship">{{ order.get_status_display }}</span>
-                        {% elif order.status == 'CA' %}
-                            <span class="status-badge status-cancelled">{{ order.get_status_display }}</span>
-                        {% endif %}
-                    </td>
-                    <td class="date">{{ order.arrival_date|date:"d.m. Y H:i" }}</td>
-                    <td>
+                    </span>
+                </div>
+                
+                <div class="order-card-row">
+                    <span class="order-card-label">📱 Urządzenie: </span>
+                    <span class="order-card-value">{{ order.device }}</span>
+                </div>
+                
+                <div class="order-card-row">
+                    <span class="order-card-label">📝 Opis:</span>
+                    <span class="order-card-value">{{ order.description|truncatewords:8 }}</span>
+                </div>
+                
+                <div class="order-card-row">
+                    <span class="order-card-label">📅 Przyjęcie:</span>
+                    <span class="order-card-value">{{ order.arrival_date|date:"d.m. Y H:i" }}</span>
+                </div>
+                
+                <div class="order-card-row">
+                    <span class="order-card-label">✅ Zakończenie: </span>
+                    <span class="order-card-value">
                         {% if order.finish_date %}
-                            <span class="finished">{{ order.finish_date|date:"d.m. Y H:i" }}</span>
+                            {{ order.finish_date|date:"d. m.Y H:i" }}
                         {% else %}
                             <span class="not-finished">W trakcie</span>
                         {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
         {% else %}
         <div class="no-orders">
             <p>📭 Brak zamówień do wyświetlenia</p>
