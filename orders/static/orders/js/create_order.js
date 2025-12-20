@@ -1,43 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Get DOM elements
     const modeButtons = document.querySelectorAll('.mode-btn');
     const modeInput = document.getElementById('modeInput');
     const existingClientSection = document.getElementById('existingClientSection');
     const newClientSection = document.getElementById('newClientSection');
     const orderForm = document.getElementById('orderForm');
 
-    // Handle mode switching
     modeButtons.forEach(button => {
         button.addEventListener('click', function() {
             const mode = this.getAttribute('data-mode');
 
-            // Update active state
             modeButtons.forEach(btn => btn.classList.remove('active'));
             this.classList. add('active');
 
-            // Update hidden input
             modeInput.value = mode;
 
-            // Toggle sections
             if (mode === 'existing') {
                 existingClientSection.classList.add('active');
                 newClientSection.classList.remove('active');
 
-                // Enable existing client select, disable new client fields
                 enableExistingClientFields();
                 disableNewClientFields();
             } else {
                 existingClientSection.classList.remove('active');
                 newClientSection. classList.add('active');
 
-                // Disable existing client select, enable new client fields
                 disableExistingClientFields();
                 enableNewClientFields();
             }
         });
     });
 
-    // Helper functions to enable/disable fields
     function enableExistingClientFields() {
         const clientSelect = document.querySelector('#existingClientSection select');
         if (clientSelect) {
@@ -60,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const newClientInputs = newClientSection.querySelectorAll('input, select, textarea');
         newClientInputs. forEach(input => {
             input.removeAttribute('disabled');
-            // Przywróć oryginalne atrybuty name
             const originalName = input.getAttribute('data-name');
             if (originalName) {
                 input.setAttribute('name', originalName);
@@ -72,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const newClientInputs = newClientSection.querySelectorAll('input, select, textarea');
         newClientInputs.forEach(input => {
             input.setAttribute('disabled', 'disabled');
-            // Zapisz oryginalny name i usuń go
             const currentName = input.getAttribute('name');
             if (currentName) {
                 input.setAttribute('data-name', currentName);

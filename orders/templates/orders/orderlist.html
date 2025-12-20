@@ -42,43 +42,43 @@
                 </thead>
                 <tbody>
                     {% for order in order_list %}
-                    <tr>
-                        <td><strong>#{{ order.id }}</strong></td>
-                        <td>
+                        <tr class="order-row" data-url="{% url 'edytuj_zlecenie' order.id %}" style="cursor: pointer;">
+                            <td><strong>#{{ order.id }}</strong></td>
+                            <td>
                             {% if order.client %}
-                                <span class="client-info">{{ order.client }}</span>
-                            {% else %}
-                                <span class="not-finished">Brak klienta</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ order.device }}</td>
-                        <td>
-                            <div class="description" title="{{ order.description }}">
-                                {{ order.description }}
-                            </div>
-                        </td>
-                        <td>
-                            {% if order.status == 'NE' %}
-                                <span class="status-badge status-new">{{ order.get_status_display }}</span>
-                            {% elif order.status == 'PE' %}
-                                <span class="status-badge status-pending">{{ order.get_status_display }}</span>
-                            {% elif order.status == 'SH' %}
-                                <span class="status-badge status-shipped">{{ order.get_status_display }}</span>
-                            {% elif order.status == 'TS' %}
-                                <span class="status-badge status-to-ship">{{ order.get_status_display }}</span>
-                            {% elif order.status == 'CA' %}
-                                <span class="status-badge status-cancelled">{{ order.get_status_display }}</span>
-                            {% endif %}
-                        </td>
-                        <td class="date">{{ order.arrival_date|date:"d.m. Y H:i" }}</td>
-                        <td>
-                            {% if order.finish_date %}
-                                <span class="finished">{{ order.finish_date|date:"d.m.Y H:i" }}</span>
-                            {% else %}
-                                <span class="not-finished">W trakcie</span>
-                            {% endif %}
-                        </td>
-                    </tr>
+                                    <span class="client-info">{{ order.client }}</span>
+                                {% else %}
+                                    <span class="not-finished">Brak klienta</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ order.device }}</td>
+                            <td>
+                                <div class="description" title="{{ order.description }}">
+                                    {{ order.description }}
+                                </div>
+                            </td>
+                            <td>
+                                {% if order.status == 'NE' %}
+                                    <span class="status-badge status-new">{{ order.get_status_display }}</span>
+                                {% elif order.status == 'PE' %}
+                                    <span class="status-badge status-pending">{{ order.get_status_display }}</span>
+                                {% elif order.status == 'SH' %}
+                                    <span class="status-badge status-shipped">{{ order.get_status_display }}</span>
+                                {% elif order.status == 'TS' %}
+                                    <span class="status-badge status-to-ship">{{ order.get_status_display }}</span>
+                                {% elif order.status == 'CA' %}
+                                    <span class="status-badge status-cancelled">{{ order.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="date">{{ order.arrival_date|date:"d.m. Y H:i" }}</td>
+                            <td>
+                                {% if order.finish_date %}
+                                    <span class="finished">{{ order.finish_date|date:"d.m.Y H:i" }}</span>
+                                {% else %}
+                                    <span class="not-finished">W trakcie</span>
+                                {% endif %}
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -165,4 +165,8 @@
         </div>
         {% endif %}
     </div>
+{% endblock %}
+{% block extra_js %}
+    {% load static %}
+	<script src="{% static 'orders/js/orderlistview.js' %}" defer></script>
 {% endblock %}

@@ -17,7 +17,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.order-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
 
+.order-row:hover {
+    background-color:  #f0f8ff;
+}
 /* Button Add Order - stylizacja z Uiverse. io */
 .button-add-order {
     position: relative;
