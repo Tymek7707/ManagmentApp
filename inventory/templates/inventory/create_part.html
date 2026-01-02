@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load inventory_extras %}
+
+{% block title %}
+    {% if is_update %}
+        Edytuj część #{{ part.id }}
+    {% else %}
+        Dodaj nową część
+    {% endif %}
+{% endblock %}
+
+{% block style_files %}
+    <link rel="stylesheet" href="{% static 'css/create_part.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="header">
+            <h1>
+                {% if is_update %}
+                    ✏️ Edytuj część #{{ part.id }}
+                {% else %}
+                    ➕ Dodaj nową część
+                {% endif %}
+            </h1>
+            <a href="{% url 'lista_czesci' %}" class="btn-back">
+                ← Powrót do magazynu
+            </a>
+        </div>
+
+        <form method="POST" id="partForm" class="part-form">
+            {% csrf_token %}
+
+            <div class="form-section">
+                <h2>📋 Informacje o części</h2>
+
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="error-message">{{ form.name.errors }}</div>
+                    {% endif %}
+                    <small class="form-text">Podaj nazwę lub model części</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.quantity.id_for_label }}">{{ form.quantity.label }}</label>
+                        {{ form.quantity }}
+                        {% if form.quantity.errors %}
+                            <div class="error-message">{{ form.quantity.errors }}</div>
+                        {% endif %}
+                        <small class="form-text">Ilość w magazynie</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.price.id_for_label }}">{{ form.price.label }}</label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                            <div class="error-message">{{ form.price.errors }}</div>
+                        {% endif %}
+                        <small class="form-text">Cena za 1 sztukę</small>
+                    </div>
+                </div>
+
+                {% if is_update %}
+                    <div class="info-box">
+                        <div class="info-row">
+                            <span class="info-label">💰 Aktualna wartość całkowita:</span>
+                            <span class="info-value" id="totalValue">
+                                {{ part.quantity|add:0|floatformat:0|multiply:part.price|floatformat:2 }} zł
+                            </span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    {% if is_update %}
+                        Zaktualizuj część
+                    {% else %}
+                        Dodaj część
+                    {% endif %}
+                </button>
+                <a href="{% url 'lista_czesci' %}" class="btn-cancel">
+                    Anuluj
+                </a>
+            </div>
+        </form>
+
+        {% if is_update %}
+            <div class="delete-section">
+                <form method="POST" action="{% url 'usun_czesc' part.id %}"
+                      onsubmit="return confirm('Czy na pewno usunąć część: {{ part.name }}?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete">
+                        🗑️ Usuń część
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="{% static 'js/create_part.js' %}"></script>
+{% endblock %}

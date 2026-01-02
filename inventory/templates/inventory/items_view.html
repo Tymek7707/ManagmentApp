@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load inventory_extras %}
+{% block title %}
+    Magazyn - Lista Części
+{% endblock %}
+{% block style_files %}
+    <link rel="stylesheet" href="{% static 'css/part_list.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>📦 Magazyn Części</h1>
+                <a href="{% url 'dodaj_czesc' %}" class="button-add-part">
+                    <span class="shadow"></span>
+                    <span class="edge"></span>
+                    <span class="front text">+ Dodaj nową część</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ total_parts }}</div>
+                    <div class="stat-label">Różnych części</div>
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ low_stock }}</div>
+                    <div class="stat-label">Niski stan</div>
+                </div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-icon">💰</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ total_value|floatformat:2 }} zł</div>
+                    <div class="stat-label">Wartość magazynu</div>
+                </div>
+            </div>
+        </div>
+
+        {% if parts %}
+            <div class="table-container">
+                <table class="parts-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nazwa</th>
+                            <th>Ilość</th>
+                            <th>Cena jednostkowa</th>
+                            <th>Wartość całkowita</th>
+                            <th>Status</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for part in parts %}
+                            <tr class="part-row {% if part.quantity <= 5 %}low-stock{% elif part.quantity <= 10 %}medium-stock{% endif %}">
+                                <td><strong>#{{ part.id }}</strong></td>
+                                <td class="part-name">{{ part.name }}</td>
+                                <td class="quantity">
+                                    <span class="quantity-badge">{{ part.quantity }} szt.</span>
+                                </td>
+                                <td class="price">{{ part.price|floatformat:2 }} zł</td>
+                                <td class="total-value">
+                                    <strong>{{ part.quantity|add:0|floatformat:0|multiply:part.price|floatformat:2 }} zł</strong>
+                                </td>
+                                <td>
+                                    {% if part.quantity == 0 %}
+                                        <span class="status-badge status-out">Brak</span>
+                                    {% elif part.quantity <= 5 %}
+                                        <span class="status-badge status-low">Niski</span>
+                                    {% elif part.quantity <= 10 %}
+                                        <span class="status-badge status-medium">Średni</span>
+                                    {% else %}
+                                        <span class="status-badge status-ok">Dostępny</span>
+                                    {% endif %}
+                                </td>
+                                <td class="actions">
+                                    <a href="{% url 'aktualizuj_czesc' part.id %}" class="btn-edit" title="Edytuj">
+                                        ✏️
+                                    </a>
+                                    <form method="POST" action="{% url 'usun_czesc' part.id %}"
+                                          style="display:  inline;"
+                                          onsubmit="return confirm('Czy na pewno usunąć część:  {{ part.name }}?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-delete" title="Usuń">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="parts-cards">
+                {% for part in parts %}
+                    <div class="part-card {% if part.quantity <= 5 %}low-stock{% elif part.quantity <= 10 %}medium-stock{% endif %}">
+                        <div class="part-card-header">
+                            <div class="part-card-id">#{{ part.id }}</div>
+                            {% if part.quantity == 0 %}
+                                <span class="status-badge status-out">Brak</span>
+                            {% elif part.quantity <= 5 %}
+                                <span class="status-badge status-low">Niski</span>
+                            {% elif part.quantity <= 10 %}
+                                <span class="status-badge status-medium">Średni</span>
+                            {% else %}
+                                <span class="status-badge status-ok">Dostępny</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="part-card-name">{{ part.name }}</div>
+
+                        <div class="part-card-row">
+                            <span class="part-card-label">📦 Ilość:</span>
+                            <span class="part-card-value"><strong>{{ part.quantity }} szt.</strong></span>
+                        </div>
+
+                        <div class="part-card-row">
+                            <span class="part-card-label">💵 Cena:</span>
+                            <span class="part-card-value">{{ part.price|floatformat:2 }} zł</span>
+                        </div>
+
+                        <div class="part-card-row">
+                            <span class="part-card-label">💰 Wartość:</span>
+                            <span class="part-card-value"><strong>{{ part.quantity|add:0|floatformat:0|multiply:part.price|floatformat:2 }} zł</strong></span>
+                        </div>
+
+                        <div class="part-card-actions">
+                            <a href="{% url 'aktualizuj_czesc' part.id %}" class="btn-edit">
+                                ✏️ Edytuj
+                            </a>
+                            <form method="POST" action="{% url 'usun_czesc' part.id %}"
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Czy na pewno usunąć część: {{ part.name }}?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-delete">
+                                    🗑️ Usuń
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if is_paginated %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1" class="page-link">« Pierwsza</a>
+                        <a href="?page={{ page_obj.previous_page_number }}" class="page-link">‹ Poprzednia</a>
+                    {% endif %}
+
+                    <span class="page-info">Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}</span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="page-link">Następna ›</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Ostatnia »</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <div class="no-parts">
+                <div class="empty-icon">📭</div>
+                <p>Brak części w magazynie</p>
+                <a href="{% url 'dodaj_czesc' %}" class="btn-add-first">
+                    Dodaj pierwszą część
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/part_list.js' %}" defer></script>
+{% endblock %}

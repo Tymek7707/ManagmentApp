@@ -1,3 +1,4 @@
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView
@@ -92,4 +93,8 @@ def delete_order(request, id):
     else:
         messages.warning(request, 'nieprawidlowe zadanie')
         return redirect('lista_zlecen')
+@login_required()
+def logout_view(request):
+    logout(request)
+    return redirect('dashboard')
 
