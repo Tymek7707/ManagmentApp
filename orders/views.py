@@ -2,11 +2,15 @@ from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView
-from .models import Order
+from .models import Order , UsedPart
+from inventory.models import Part
 from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import ClientForm, OrderForm
+import json
+from django.http import JsonResponse
+from django.db import transaction
 
 
 @login_required
@@ -65,24 +69,61 @@ class OrderView(LoginRequiredMixin, ListView):
     template_name = 'orders/orderlist.html'
     success_url = reverse_lazy('dashboard')
 @login_required
+@transaction.atomic()
 def update_order(request , id):
     order = get_object_or_404(Order, id=id)
     org_client = order.client
     if request.method == "POST":
         order_form = OrderForm(request.POST, instance=order)
+        parts_data = request.POST.get('parts_data', '[]')
+        parts = json.loads(parts_data)
         if order_form.is_valid():
+            for used_part in order.used_parts.all():
+                used_part.part.quantity += used_part.quantity
+                used_part.part.save()
+                used_part.delete()
             updated_order = order_form.save(commit = False)
             updated_order.client = org_client
             updated_order.save()
+            for part_item in parts:
+                part_id = part_item['part_id']
+                quantity = int(part_item['quantity'])
+                try:
+                    part = Part.objects.get(id = part_id)
+                    if part.quantity < quantity:
+                        messages.error(request,f"niewystarczajaca ilosc {part.name}. Dostepne {part.quantity}")
+                        return redirect('aktualizuj_czesc', id=id)
+                    UsedPart.objects.create(order=order, part=part, quantity=quantity)
+                    part.quantity -= quantity
+                    part.save()
+                except Part.DoesNotExist:
+                    messages.error(request, f"Część o id {part_id} nie istnieje")
+                    return redirect('aktualizuj_czesc', id=id)
 
             return redirect('lista_zlecen')
     else:
         order_form = OrderForm(instance=order)
-    return render(request, 'orders/create_order.html', {
+    available_parts = list(Part.objects.all().values('id', 'name', 'quantity','price'))
+    used_parts = order.used_parts.select_related('part').all()
+    return render(request, 'orders/update_order.html', {
         'order_form': order_form,
-        'is_update' : True,
         'order': order,
+        'available_parts':  json.dumps(available_parts),
+        'used_parts': used_parts,
+        'is_update': True,
     })
+@login_required
+def check_part_availability(request, part_id):
+    try:
+        part = Part.objects.get(id=part_id)
+        return JsonResponse({
+            'available': True,
+            'quantity': part. quantity,
+            'price': part.price,
+            'name': part.name
+        })
+    except Part.DoesNotExist:
+        return JsonResponse({'available': False}, status=404)
 @login_required()
 def delete_order(request, id):
     order = get_object_or_404(Order , id=id)

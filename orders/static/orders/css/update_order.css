@@ -1,0 +1,237 @@
+#partsTable {
+    margin-top: 1rem;
+}
+
+#partsTable thead {
+    background-color: #f8f9fa;
+}
+
+#partsTable thead th {
+    font-weight: 600;
+    text-align:  center;
+    vertical-align: middle;
+    padding: 0.75rem;
+    border:  1px solid #dee2e6;
+}
+
+#partsTable tbody td {
+    vertical-align: middle;
+    padding: 0.5rem;
+}
+
+#partsTable tfoot {
+    background-color: #e9ecef;
+    font-weight: bold;
+}
+
+#partsTable tfoot th {
+    padding:  0.75rem;
+}
+
+
+
+
+#partsTable th:nth-child(1),
+#partsTable td:nth-child(1) {
+    width: 35%;
+}
+
+#partsTable th:nth-child(2),
+#partsTable td:nth-child(2) {
+    width: 12%;
+}
+
+#partsTable th:nth-child(3),
+#partsTable td:nth-child(3) {
+    width: 12%;
+}
+
+#partsTable th:nth-child(4),
+#partsTable td:nth-child(4) {
+    width: 13%;
+}
+
+#partsTable th:nth-child(5),
+#partsTable td:nth-child(5) {
+    width: 13%;  /
+}
+
+#partsTable th:nth-child(6),
+#partsTable td:nth-child(6) {
+    width: 10%;
+    text-align: center;
+}
+
+
+
+#partsTable .part-select,
+#partsTable .quantity-input {
+    width: 100%;
+}
+
+#partsTable .quantity-input {
+    text-align: right;
+}
+
+#partsTable .available-quantity,
+#partsTable .unit-price,
+#partsTable .total-price {
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+}
+
+
+
+.is-invalid {
+    border-color: #dc3545 !important;
+    background-color: #fff5f5 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.table-danger {
+    background-color: #f8d7da !important;
+}
+
+.table-danger td {
+    border-color: #f5c2c7 !important;
+}
+
+
+
+#addPartBtn {
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.remove-part {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.remove-part:hover {
+    transform: scale(1.1);
+    background-color: #c82333 !important;
+}
+
+
+#grandTotal {
+    font-size: 1.1rem;
+    color: #28a745;
+    font-family: 'Courier New', monospace;
+}
+
+
+@media (max-width: 768px) {
+    #partsTable {
+        font-size: 0.875rem;
+    }
+
+    #partsTable th,
+    #partsTable td {
+        padding: 0.4rem;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    #addPartBtn {
+        width: 100%;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#partsTableBody tr {
+    animation: fadeIn 0.3s ease;
+}
+
+.removing {
+    animation: fadeOut 0.3s ease;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity:  1;
+    }
+    to {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+}
+
+
+
+
+.remove-part[title] {
+    position: relative;
+}
+
+
+
+.parts-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.parts-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left:  50%;
+    width: 30px;
+    height: 30px;
+    margin:  -15px 0 0 -15px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation:  spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+.parts-empty-message {
+    text-align:  center;
+    padding: 2rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+
+.part-select:focus,
+.quantity-input:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow:  0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+@media print {
+    #addPartBtn,
+    .remove-part {
+        display:  none;
+    }
+
+    #partsTable {
+        border: 1px solid #000;
+    }
+
+    .part-select,
+    .quantity-input {
+        border: none;
+        background: transparent;
+    }
+}

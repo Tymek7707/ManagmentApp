@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load inventory_extras %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'orders/css/update_order.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edytuj zamówienie #{{ order.id }}</h2>
+    
+    <form method="post" id="orderForm">
+        {% csrf_token %}
+        
+        <h3>Dane zamówienia</h3>
+        {{ order_form.as_p }}
+        
+        <h3 class="mt-4">Użyte części</h3>
+        
+        <div class="mb-3">
+            <button type="button" class="btn btn-success" id="addPartBtn">
+                ➕ Dodaj część
+            </button>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-bordered" id="partsTable">
+                <thead>
+                    <tr>
+                        <th>Część</th>
+                        <th>Ilość</th>
+                        <th>Dostępne</th>
+                        <th>Cena jedn.</th>
+                        <th>Suma</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody id="partsTableBody">
+                    {% for used_part in used_parts %}
+                    <tr>
+                        <td>
+                            <select class="form-control part-select" required>
+                                {% for part in available_parts %}
+                                <option value="{{ part.id }}" 
+                                        data-quantity="{{ part.quantity }}" 
+                                        data-price="{{ part.price }}"
+                                        {% if part.id == used_part.part.id %}selected{% endif %}>
+                                    {{ part.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control quantity-input" 
+                                   value="{{ used_part.quantity }}" min="1" required>
+                        </td>
+                        <td class="available-quantity">{{ used_part.part.quantity }}</td>
+                        <td class="unit-price">{{ used_part.part.price|floatformat:2 }} zł</td>
+                        <td class="total-price">{{ used_part.quantity|multiply:used_part.part.price|floatformat:2 }} zł</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm remove-part" title="Usuń część">
+                                🗑️
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-end">Razem:</th>
+                        <th id="grandTotal">0. 00 zł</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        
+        <input type="hidden" name="parts_data" id="partsData">
+        
+        <script id="availablePartsData" type="application/json">
+            {{ available_parts|safe }}
+        </script>
+        
+        <button type="submit" class="btn btn-primary">💾 Zapisz zmiany</button>
+        <a href="{% url 'lista_zlecen' %}" class="btn btn-secondary">❌ Anuluj</a>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'orders/js/update_order.js' %}"></script>
+{% endblock %}
+```
