@@ -105,7 +105,7 @@ def update_order(request , id):
         order_form = OrderForm(instance=order)
     available_parts = list(Part.objects.all().values('id', 'name', 'quantity','price'))
     used_parts = order.used_parts.select_related('part').all()
-    return render(request, 'orders/update_order.html', {
+    return render(request, 'orders/create_order.html', {
         'order_form': order_form,
         'order': order,
         'available_parts':  json.dumps(available_parts),
@@ -118,7 +118,7 @@ def check_part_availability(request, part_id):
         part = Part.objects.get(id=part_id)
         return JsonResponse({
             'available': True,
-            'quantity': part. quantity,
+            'quantity': part.quantity,
             'price': part.price,
             'name': part.name
         })
